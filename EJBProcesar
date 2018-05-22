@@ -1,0 +1,69 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package app;
+
+import javax.ejb.Singleton;
+
+/**
+ *
+ * @author juanparedes
+ */
+
+
+
+@Singleton
+public class EJBProcesar implements EJBProcesarLocal {
+
+
+    String usuarioPrivilegio = "";
+    String documento = "";
+    boolean estado = false;
+    
+    @Override
+    public String MetododGuardar(String usuario, String comentario) {
+        if(usuarioPrivilegio.equals(usuario)){
+        documento = documento+"<br/>"+comentario;
+        return "<div class='contenedor-text'><b><i class='fas fa-user'></i> Usuario:</b> "+usuarioPrivilegio+"<br/><b>Texto:</b> "+documento+"</div><br/><div class='exito-reservado'>Guardado con éxtio</div>";
+        }
+        return "<div class='alert'><i class='fas fa-exclamation-triangle'></i> El documento esta siendo usado por otro usuario (<i class='fas fa-user'></i> = "+usuarioPrivilegio+")";
+        
+    }
+
+    @Override 
+    public String MetodoReservar(String usuario) {
+        
+        if(usuarioPrivilegio.equals(usuario) || usuarioPrivilegio.equals("")){
+        estado = true;
+        usuarioPrivilegio = usuario;
+        return "<div class='exito-reservado'><i class='fas fa-user-check'></i> Reservado con éxtio<br/><b>Reservado por Usuario:</b> "+usuarioPrivilegio+"</div>";
+        }
+        return "<div class='alert'><i class='fas fa-exclamation-triangle'></i> Lo sentimos, Ud. no puede resarvar el documento porque esta reservado por otro usuario (<i class='fas fa-user'></i> = "+usuarioPrivilegio+")</div>";
+
+    }
+
+    @Override
+    public String MetodoLiberar(String usuario) {
+        
+        if(usuarioPrivilegio.equals(usuario)){
+        estado = false;
+        usuarioPrivilegio = "";
+        return "<div class='exito-reservado'><i class='fas fa-check-circle'></i> Documento liberado con éxito</div>";
+        }
+        
+        return "<div class='alert'><i class='fas fa-exclamation-triangle'></i> Lo sentimos, Ud. no ha reservado el documento, no lo puede librar porque está siendo usado por <i class='fas fa-user'></i> "+usuarioPrivilegio+"</div>";
+    }
+
+    @Override
+    public String MetodoMostrarUsuario() {
+        return usuarioPrivilegio;
+    }
+
+    @Override
+    public String MetodoMostrarDocumento() {
+        return documento;
+    }
+    
+}
